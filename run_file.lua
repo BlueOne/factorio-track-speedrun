@@ -133,6 +133,14 @@ local function change_recipe_and_insert(position, recipe, amount)
 	return change_recipe_and_insert_except(position, recipe, amount)
 end
 
+local function repeat_command(command, times)
+  local commands = {}
+  for i = 1,times do
+    table.insert(commands, command)
+  end
+  return commands
+end
+
 local bottom_furnace = {-3, 37, entity=true}
 local circuit_assembler = {-7.5, 10.5, entity=true}
 local belt_assembler = {-7.5, 7.5, entity=true}
@@ -178,17 +186,20 @@ commandqueue["command_list"] = {
 		name = "start-3",
     required = {"mine-huge-rock"},
 		commands = {
-      {"mine", {-11.5,17.5}, amount=2, name="mine-iron"},
+      {"mine", {-11.5,17.5}, amount=6, name="mine-iron"},
 			{"move", "build-miner"},
       {"craft", "iron-gear-wheel", 1},
       {"craft-build", "burner-mining-drill", {-8,14}, 4, name="build-miner"},
       {"build", "stone-furnace", {-8,16}},
+      {"build", "stone-furnace", {-10,18}},
+      {"build", "stone-furnace", {-8,18}},
       {"take", {-10,16}},
+      {"sequence", repeat_command({"sequence", {{"put", {-10,18}, "iron-ore", 1}, {"put", {-8,18}, "iron-ore", 1}}}, 3)},
 		}
 	},
 	{
 		name = "final",
-		required = {"mine-huge-rock"},
+		required = {"mine-iron"},
 		commands = {
 			--{"display-contents", "assembling-machine"},
 			{"enable-manual-walking"},
